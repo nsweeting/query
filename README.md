@@ -167,6 +167,20 @@ We can scope our data by providing the params from our controller. By default, Q
 A scope must be made up of a two item tuple. The first item must be a module. The second item must be a function
 within the module, in binary format. The function must have an arity of 2 - with the first argument being an `Ecto.Queryable` and the second argument being the value of the query param passed.
 
+So, given the above scope, we could assume we have the following:
+
+```elixir
+defmodule App.Context do
+  import Ecto.Query
+
+  def by_title(queryable, value) do
+    where(queryable, [e], e.title == ^value)
+  end
+end
+```
+
+Which would allow us to do:
+
 ```elixir
 iex(1)> App.Post
 |> Query.builder(%{"by_title" => "Title 1"}, [scopes: [{App.Context, "by_title"}]])
