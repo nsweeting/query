@@ -174,7 +174,7 @@ defmodule App.Context do
   import Ecto.Query
 
   def by_title(queryable, value) do
-    where(queryable, [e], e.title == ^value)
+    where(queryable, [p], p.title == ^value)
   end
 end
 ```
