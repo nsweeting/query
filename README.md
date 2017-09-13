@@ -42,7 +42,7 @@ defmodule App.PostController do
     result = App.Post
     |> Query.builder(params, @options)
     |> Query.result()
-    render(conn, "index.json", result: result)
+    render(conn, "index.json", posts: result)
   end
 end
 ```
