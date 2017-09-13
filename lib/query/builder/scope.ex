@@ -1,4 +1,6 @@
 defmodule Query.Builder.Scope do
+  @moduledoc false
+
   def new(params \\ %{}, scopes \\ [])
   def new(params, scopes)
   when is_map(params) and is_list(scopes) do

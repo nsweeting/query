@@ -1,4 +1,6 @@
 defmodule Query.Result.Meta do
+  @moduledoc false
+
   import Ecto.Query, warn: false
 
   alias Query.Builder

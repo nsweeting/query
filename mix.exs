@@ -8,6 +8,8 @@ defmodule Query.Mixfile do
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
       aliases: aliases(),
+      description: description(),
+      package: package(),
       start_permanent: Mix.env == :prod,
       deps: deps()
     ]
@@ -17,6 +19,21 @@ defmodule Query.Mixfile do
   def application do
     [
       extra_applications: applications(Mix.env)
+    ]
+  end
+
+  defp description do
+    """
+    Query adds simple tools to aid the use of Ecto in web settings.
+    """
+  end
+
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README*"],
+      maintainers: ["Nicholas Sweeting"],
+      licenses: ["MIT"],
+      links:  %{"GitHub" => "https://github.com/nsweeting/query"}
     ]
   end
 
@@ -40,7 +57,8 @@ defmodule Query.Mixfile do
   defp deps do
     [
       {:ecto, "~> 2.1"},
-      {:postgrex, "~> 0.13.0"}
+      {:postgrex, "~> 0.13.0", only: :test},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 end

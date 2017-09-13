@@ -1,6 +1,21 @@
 defmodule Query.Builder do
-  @type t :: %__MODULE__{}
+  @moduledoc """
+  The Query.Builder is used to take query params, and ready them to create a
+  valid 
+  """
 
+  @type param :: %{binary => binary}
+
+  @type t :: %__MODULE__{
+    page:       integer,
+    limit:      integer,
+    offset:     integer,
+    sorting:    [{atom, atom}],
+    scopes:     [{atom, atom, [binary]}],
+    repo:       atom,
+    queryable:  Ecto.Queryable.t
+  }
+  
   alias Query.Config
 
   @defaults [
@@ -20,11 +35,11 @@ defmodule Query.Builder do
     :queryable
   ]
 
-  @spec new(atom | Ecto.Queryable.t, map, list) :: Query.Builder.t
+  @spec new(Ecto.Queryable.t, param, list) :: Query.Builder.t
   def new(_, params \\ %{}, options \\ [])
-  def new(atom, params, options)
-  when is_atom(atom) and is_map(params) and is_list(options) do
-    atom
+  def new(queryable, params, options)
+  when is_atom(queryable) and is_map(params) and is_list(options) do
+    queryable
     |> Ecto.Queryable.to_query()
     |> new(params, options)
   end
@@ -44,26 +59,31 @@ defmodule Query.Builder do
     |> put_scopes(params, scopes)
   end
 
-  def put_queryable(options, queryable) do
-    %{options | queryable: queryable}
+  @spec new(Query.Builder.t, Ecto.Queryable.t) :: Query.Builder.t
+  def put_queryable(builder, queryable) do
+    %{builder | queryable: queryable}
   end
 
-  def put_repo(options, repo) do
-    %{options | repo: repo}
+  @spec new(Query.Builder.t, atom) :: Query.Builder.t
+  def put_repo(builder, repo) do
+    %{builder | repo: repo}
   end
 
-  def put_paging(options, params, paging) do
+  @spec new(Query.Builder.t, param, map) :: Query.Builder.t
+  def put_paging(builder, params, paging) do
     {limit, offset, page} = Query.Builder.Page.new(params, paging)
-    %{options | limit: limit, offset: offset, page: page}
+    %{builder | limit: limit, offset: offset, page: page}
   end
 
-  def put_sorting(options, params, sorting) do
+  @spec new(Query.Builder.t, param, map) :: Query.Builder.t
+  def put_sorting(builder, params, sorting) do
     sorting = Query.Builder.Sort.new(params, sorting)
-    %{options | sorting: sorting}
+    %{builder | sorting: sorting}
   end
 
-  def put_scopes(options, params, scopes) do
+  @spec new(Query.Builder.t, param, list) :: Query.Builder.t
+  def put_scopes(builder, params, scopes) do
     scopes = Query.Builder.Scope.new(params, scopes)
-    %{options | scopes: scopes}
+    %{builder | scopes: scopes}
   end
 end

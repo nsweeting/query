@@ -1,4 +1,6 @@
 defmodule Query.Builder.Page do
+  @moduledoc false
+
   @defaults %{
     default_page: 1,
     default_limit: 20,

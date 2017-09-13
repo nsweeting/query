@@ -1,4 +1,6 @@
 defmodule Query.Config do
+  @moduledoc false
+
   def get(key, default \\ nil) do
     Application.get_env(:query, key, default)
   end

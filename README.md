@@ -1,8 +1,65 @@
 # Query
 
 Query adds simple tools to aid the use of Ecto in web settings. With it, we can
-add paging, scopes, and sorting without much fuss.
+add paging, scopes, and sorting with ease. At its heart, Query lets us build
+complex queries from our controller params.
 
+Before starting, we should configure Query. At a minimum, we need to add an Ecto
+Repo from which to work with. 
+
+```elixir
+config :query, [
+  repo: App.Repo
+]
+```
+
+Query is split into two main components:
+
+  * `Query.Builder` - the builder readies our query paging, sorting, and
+  scopes based on the provided params. The builder does not touch the database.
+
+  * `Query.Result` - the result takes our builder, composes the final query,
+  and fetches the data from our repo. It will also provide additional meta
+  details that we can provide back to the user.
+
+We can now compose complex queries from our controller.
+
+```elixir
+defmodule App.PostController do
+  use App, :controller
+
+  @options [
+    sorting: %{permitted: ["id", "title", "created_at"]},
+    scopes: [{App.Context, "by_title"}]
+  ]
+
+  def index(conn, params) do
+    result = App.Post
+    |> Query.builder(params, @options)
+    |> Query.result()
+    render(conn, "index.json", result: result)
+  end
+end
+```
+  
+Given the controller above, we can now pass the following query options.
+
+`/posts?sort_by=created_at&direction=desc&by_title=test`
+
+We are able to sort by `created_at`, as we permitted it in our sorting options.
+By default, we are not allowed to sort by any attribute. They must be whitelisted
+first.
+
+We are also able to pass the `by_title` query param. Once again, this is only
+possible as we whitelisted it in our list of scopes. Scopes are passed in the
+following format: `{App.Context, "by_title"}`. The first item in the tuple is
+the module that contains the function from which we will use to query against.
+The second item is the query param as well as function name.
+
+So given the above, we must have an `App.Context` module that contains a
+`by_title` function. This function must have an arity of 2 - with the first argument
+being an `Ecto.Queryable` and the second argument being the value that we
+are querying with. In the above case, it would be "test".
 
 ## Basics
 
@@ -20,16 +77,9 @@ scopes: [], sorting: [asc: :id]}
 
 iex(2)> Query.result(builder)
 
-%Query.Result{data: [%App.Post{__meta__: #Ecto.Schema.Metadata<:loaded, "posts">,
-   body: "Body 1",
-   comments: #Ecto.Association.NotLoaded<association :comments is not loaded>,
-   id: 839, inserted_at: ~N[2017-09-13 02:57:33.170049], published: false,
-   title: "Title 1", updated_at: ~N[2017-09-13 02:57:33.170054]},
-  %App.Post{__meta__: #Ecto.Schema.Metadata<:loaded, "posts">,
-   body: "Body 2",
-   comments: #Ecto.Association.NotLoaded<association :comments is not loaded>,
-   id: 840, inserted_at: ~N[2017-09-13 02:57:33.172312], published: false,
-   title: "Title 2", updated_at: ~N[2017-09-13 02:57:33.172317]}],
+%Query.Result{data: [
+  %App.Post{body: "Body 1", id: 839, title: "Title 1"},
+  %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
  meta: %{page: 1, page_total: 2, total: 2}}
 ```
 
@@ -78,16 +128,9 @@ iex(1)> App.Post
 |> Query.builder(%{"sort_by" => "id", "direction" => "desc"}, [sorting: [permitted: ["id", "title"]]])
 |> Query.result()
 
-%Query.Result{data: [%App.Post{__meta__: #Ecto.Schema.Metadata<:loaded, "posts">,
-   body: "Body 2",
-   comments: #Ecto.Association.NotLoaded<association :comments is not loaded>,
-   id: 840, inserted_at: ~N[2017-09-13 02:57:33.170049], published: false,
-   title: "Title 2", updated_at: ~N[2017-09-13 02:57:33.170054]},
-  %App.Post{__meta__: #Ecto.Schema.Metadata<:loaded, "posts">,
-   body: "Body 1",
-   comments: #Ecto.Association.NotLoaded<association :comments is not loaded>,
-   id: 839, inserted_at: ~N[2017-09-13 02:57:33.172312], published: false,
-   title: "Title 1", updated_at: ~N[2017-09-13 02:57:33.172317]}],
+%Query.Result{data: [
+  %App.Post{body: "Body 2", id: 840,title: "Title 2"},
+  %App.Post{body: "Body 1", id: 839, title: "Title 1"}],
  meta: %{page: 1, page_total: 2, total: 2}}
 ```
 
@@ -111,19 +154,11 @@ iex(1)> App.Post
 |> Query.builder(%{"sort_by" => "id", "dir" => "desc"}, [sorting: [dir_param: "dir", permitted: ["id", "title"]]])
 |> Query.result()
 
-%Query.Result{data: [%App.Post{__meta__: #Ecto.Schema.Metadata<:loaded, "posts">,
-   body: "Body 2",
-   comments: #Ecto.Association.NotLoaded<association :comments is not loaded>,
-   id: 840, inserted_at: ~N[2017-09-13 02:57:33.170049], published: false,
-   title: "Title 2", updated_at: ~N[2017-09-13 02:57:33.170054]},
-  %App.Post{__meta__: #Ecto.Schema.Metadata<:loaded, "posts">,
-   body: "Body 1",
-   comments: #Ecto.Association.NotLoaded<association :comments is not loaded>,
-   id: 839, inserted_at: ~N[2017-09-13 02:57:33.172312], published: false,
-   title: "Title 1", updated_at: ~N[2017-09-13 02:57:33.172317]}],
+%Query.Result{data: [
+  %App.Post{body: "Body 2", id: 840,title: "Title 2"},
+  %App.Post{body: "Body 1", id: 839, title: "Title 1"}],
  meta: %{page: 1, page_total: 2, total: 2}}
 ```
-
 
 ## Scoping
 

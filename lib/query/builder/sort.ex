@@ -1,4 +1,6 @@
 defmodule Query.Builder.Sort do
+  @moduledoc false
+
   @defaults %{
     default_sort: "id",
     default_dir: "asc",
