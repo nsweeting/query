@@ -99,7 +99,7 @@ We can configure all of our paging details.
 
 ```elixir
 config :query, [
-	paging: %{
+  paging: %{
     default_page: 1,
     default_limit: 20,
     limit_param: "limit",
@@ -138,7 +138,7 @@ We can configure all of our sorting details.
 
 ```elixir
 config :query, [
-	sorting: %{
+  sorting: %{
     default_sort: "id",
     default_dir: "asc",
     sort_param: "sort_by",
