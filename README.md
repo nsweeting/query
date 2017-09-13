@@ -34,6 +34,11 @@ defmodule App.PostController do
   ]
 
   def index(conn, params) do
+    # This would most likely be moved into our "context" - this is just an example.
+    # Using a context, we could instead do:
+    #
+    # result = App.Context.list_posts(params, @options)
+    #
     result = App.Post
     |> Query.builder(params, @options)
     |> Query.result()
