@@ -162,10 +162,20 @@ iex(1)> App.Post
 
 ## Scoping
 
-We can scope our data by providing the params from our controller. By default, Query has no scopes applied. Any query param scopes must be whitelisted. 
+We can scope our data by providing the params from our controller. By default, Query has no scopes applied. Any query param scopes must be whitelisted. We do this by passing the `[scopes: [{App.Context, "by_title"}]]` options to our builder.
 
-More info coming soon.
+A scope must be made up of a two item tuple. The first item must be a module. The second item must be a function
+within the module, in binary format. The function must have an arity of 2 - with the first argument being an `Ecto.Queryable` and the second argument being the value of the query param passed.
 
+```elixir
+iex(1)> App.Post
+|> Query.builder(%{"by_title" => "Title 1"}, [scopes: [{App.Context, "by_title"}]])
+|> Query.result()
+
+%Query.Result{data: [
+  %App.Post{body: "Body 1", id: 839, title: "Title 1"}],
+ meta: %{page: 1, page_total: 1, total: 2}}
+```
 
 ## Installation
 
