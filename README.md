@@ -63,8 +63,8 @@ are querying with. In the above case, it would be "test".
 
 ## Basics
 
-At the core of Query are the `Query.Builder` struct and `Query.Result` struct. We use the `Query.Builder` to retrieve
-data for our `Query.Result`. 
+At the core of Query are the `Query.Builder` struct and `Query.Result` struct. We use
+the `Query.Builder` to compose our query, and the `Query.Result` to fetch our data.
 
 Given an `App.Post` schema, we can create a builder that will help us retrieve our results.
 
@@ -85,7 +85,7 @@ iex(2)> Query.result(builder)
 
 ## Paging
 
-We can page our data by provding the params from our controllers. By default, Query uses the "page" query param for the page number, and the "limit" query param for the max number of items. The default page is 1, and the default limit is 20. All of this is configurable.
+We can page our data by providing the params from our controllers. By default, Query uses the "page" query param for the page number, and the "limit" query param for the max number of items. The default page is 1, and the default limit is 20. All of this is configurable.
 
 ```elixir
 iex(1)> App.Post 
@@ -100,11 +100,11 @@ We can configure all of our paging details.
 ```elixir
 config :query, [
 	paging: %{
-    	default_page: 1,
-    	default_limit: 20,
-    	limit_param: "limit",
-    	page_param: "page"
-  	}
+    default_page: 1,
+    default_limit: 20,
+    limit_param: "limit",
+    page_param: "page"
+  }
 ]
 ```
 
@@ -139,11 +139,11 @@ We can configure all of our sorting details.
 ```elixir
 config :query, [
 	sorting: %{
-    	default_sort: "id",
-    	default_dir: "asc",
-    	sort_param: "sort_by",
-    	dir_param: "direction"
-  	}
+    default_sort: "id",
+    default_dir: "asc",
+    sort_param: "sort_by",
+    dir_param: "direction"
+  }
 ]
 ```
 
