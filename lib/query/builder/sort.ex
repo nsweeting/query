@@ -1,5 +1,7 @@
 defmodule Query.Builder.Sort do
-  @moduledoc false
+  @moduledoc """
+  Provides sort details for our Query.Builder.
+  """
 
   @defaults %{
     default_sort: "id",
@@ -9,6 +11,27 @@ defmodule Query.Builder.Sort do
     permitted: []
   }
 
+  @doc """
+  Provides sorting details based on the provided params and options.
+
+  ## Parameters
+
+    - params: A param map - most likely from a controller.
+    - options: A map of options.
+
+  ## Options
+    * `:default_sort` - the default sort attribute if none is provided. Defaults to "id".
+    * `:default_dir` - the default direction. Defaults to "asc".
+    * `:sort_param` - the param key to use for the sort. Deafults to "sort_by".
+    * `:dir_param` - the param key to use for the direction. Defaults to "direction".
+    * `:permitted` - a list of permitted attributes that we can sort on.
+
+
+  ## Examples
+
+      iex> Query.Builder.Sort.new(%{"sort_by" => "title", "direction" => "desc"}, %{permitted: ["title"]})
+      [{:desc, :title}]
+  """
   def new(params \\ %{}, options \\ %{}) do
     options = Map.merge(@defaults, options)
     dir     = fetch_dir(params, options)

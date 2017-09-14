@@ -1,6 +1,6 @@
 defmodule Query.Builder.Scope do
   @moduledoc """
-  Provides scope details for our Query.Builder.
+  Provides scoping details for our Query.Builder.
   """
 
   @doc """
@@ -13,7 +13,7 @@ defmodule Query.Builder.Scope do
 
   ## Examples
 
-      iex> Query.Builder.Page.new(%{"by_title" => "title"}, [{App.Context, "by_title"}, {App.Context, "by_name"}])
+      iex> Query.Builder.Scope.new(%{"by_title" => "title"}, [{App.Context, "by_title"}, {App.Context, "by_name"}])
       [{App.Context, :by_title, ["title"]}]
   """
   def new(params \\ %{}, scopes \\ [])
