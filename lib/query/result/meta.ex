@@ -6,24 +6,30 @@ defmodule Query.Result.Meta do
   alias Query.Builder
 
   def new(%Builder{} = builder, data \\ []) do
-    %{
-      total: get_total(builder),
-      page: get_page(builder),
-      page_total: get_page_total(data)
-    }
+    %{}
+    |> put_total(builder)
+    |> put_total_pages(builder)
+    |> put_page(builder)
+    |> put_page_total(data)
   end
 
-  defp get_total(%Builder{} = builder) do
-    builder.queryable
+  defp put_total(meta, %Builder{queryable: queryable, repo: repo}) do
+    total = queryable
     |> select(count("*"))
-    |> builder.repo.one()
+    |> repo.one()
+
+    Map.put(meta, :total, total)
   end
 
-  defp get_page(%Builder{page: page}) do
-    page
+  defp put_total_pages(%{total: total} = meta, %Builder{limit: limit}) do
+    Map.put(meta, :total_pages, round(total / limit))
   end
 
-  defp get_page_total(data) do
-    Enum.count(data)
+  defp put_page(meta, %Builder{page: page}) do
+    Map.put(meta, :page, page)
+  end
+
+  defp put_page_total(meta, data) do
+    Map.put(meta, :page_total, Enum.count(data))
   end
 end

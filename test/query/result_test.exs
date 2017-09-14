@@ -7,15 +7,18 @@ defmodule Query.ResultTest do
   test "can create a valid Result from a Builder with published false scope" do
     create_posts()
 
-    params = %{"published" => false}
+    params = %{"published" => false, "page" => 2}
     options = [scopes: [{Query.Context, "published"}]]
 
     result = Query.Ecto.Post
     |> Query.builder(params, options)
     |> Query.result()
 
-    assert 5 == Enum.count(result.data)
-    assert 5 == result.meta.page_total
+    assert 20 == Enum.count(result.data)
+    assert 20 == result.meta.page_total
+    assert 3 == result.meta.total_pages
+    assert 56 == result.meta.total
+    assert 2 == result.meta.page
     Enum.each(result.data, fn post -> 
       assert post.published == false
     end)
@@ -33,6 +36,9 @@ defmodule Query.ResultTest do
 
     assert 6 == Enum.count(result.data)
     assert 6 == result.meta.page_total
+    assert 3 == result.meta.total_pages
+    assert 56 == result.meta.total
+    assert 1 == result.meta.page
     Enum.each(result.data, fn post -> 
       assert post.published == true
     end)
@@ -49,10 +55,13 @@ defmodule Query.ResultTest do
 
     assert 2 == Enum.count(result.data)
     assert 2 == result.meta.page_total
+    assert 28 == result.meta.total_pages
+    assert 56 == result.meta.total
+    assert 1 == result.meta.page
   end
 
   defp create_posts do
-    Enum.map(1..5, fn i ->
+    Enum.map(1..50, fn i ->
       post = %Post{
         title: "Title #{i}",
         body: "Body #{i}",
