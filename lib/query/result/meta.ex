@@ -1,7 +1,6 @@
 defmodule Query.Result.Meta do
   @moduledoc """
-  The Query.Result.Meta is used to provide meta information about our results
-  and its paging.
+  Provides paging meta for our Query.Result.
   """
 
   @type t :: %{

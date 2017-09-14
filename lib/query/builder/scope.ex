@@ -1,6 +1,21 @@
 defmodule Query.Builder.Scope do
-  @moduledoc false
+  @moduledoc """
+  Provides scope details for our Query.Builder.
+  """
 
+  @doc """
+  Provides scoping details based on the provided params and possible scopes.
+
+  ## Parameters
+
+    - params: A param map - most likely from a controller.
+    - scopes: A list of possible scopes, formatted as two item tuples.
+
+  ## Examples
+
+      iex> Query.Builder.Page.new(%{"by_title" => "title"}, [{App.Context, "by_title"}, {App.Context, "by_name"}])
+      [{App.Context, :by_title, ["title"]}]
+  """
   def new(params \\ %{}, scopes \\ [])
   def new(params, scopes)
   when is_map(params) and is_list(scopes) do
