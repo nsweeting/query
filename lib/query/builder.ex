@@ -1,4 +1,6 @@
 defmodule Query.Builder do
+  @moduledoc false
+
   @type param :: %{binary => binary}
 
   @type t :: %__MODULE__{

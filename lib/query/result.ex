@@ -1,4 +1,6 @@
 defmodule Query.Result do
+  @moduledoc false
+
   @type t :: %__MODULE__{
     data:       list,
     meta:       map
