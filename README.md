@@ -203,7 +203,7 @@ This package can be installed by adding `query` to your list of dependencies in 
 ```elixir
 def deps do
   [
-    {:query, "~> 0.1.2"}
+    {:query, "~> 0.1.3"}
   ]
 end
 ```
