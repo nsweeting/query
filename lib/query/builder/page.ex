@@ -1,5 +1,7 @@
 defmodule Query.Builder.Page do
-  @moduledoc false
+  @moduledoc """
+  Provides paging details for our Query.Builder.
+  """
 
   @defaults %{
     default_page: 1,
@@ -8,6 +10,25 @@ defmodule Query.Builder.Page do
     page_param: "page"
   }
 
+  @doc """
+  Provides paging details based on the provided params and options.
+
+  ## Parameters
+
+    - params: A param map - most likely from a controller.
+    - options: A map of options.
+
+  ## Options
+    * `:default_page` - the default page if none is provided. Defaults to 1.
+    * `:default_limit` - the default limit. Defaults to 20.
+    * `:limit_param` - the param key to use for the limit. Deafults to "limit".
+    * `:page_param` - the param key to use for the page. Defaults to "page".
+
+  ## Examples
+
+      iex> Query.Builder.Page.new(%{"page" => 2, "per" => 10}, %{"limit_param" => "per"})
+      {10, 20, 2}
+  """
   def new(params \\ %{}, options \\ %{}) do
     options = Map.merge(@defaults, options)
     page    = fetch_page(params, options)
