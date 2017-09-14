@@ -130,7 +130,7 @@ whitelisted. We do this by passing the `[sorting: [permitted: []]]` options to o
 
 ```elixir
 iex(1)> App.Post
-|> Query.builder(%{"sort_by" => "id", "direction" => "desc"}, [sorting: [permitted: ["id", "title"]]])
+|> Query.builder(%{"sort_by" => "id", "direction" => "desc"}, [sorting: %{permitted: ["id", "title"]}])
 |> Query.result()
 
 %Query.Result{data: [
@@ -156,7 +156,7 @@ Alternatively, we can pass our sorting config via options to the builder.
 
 ```elixir
 iex(1)> App.Post
-|> Query.builder(%{"sort_by" => "id", "dir" => "desc"}, [sorting: [dir_param: "dir", permitted: ["id", "title"]]])
+|> Query.builder(%{"sort_by" => "id", "dir" => "desc"}, [sorting: %{dir_param: "dir", permitted: ["id", "title"]}])
 |> Query.result()
 
 %Query.Result{data: [
