@@ -60,6 +60,22 @@ defmodule Query.ResultTest do
     assert 1 == result.meta.page
   end
 
+  test "can create a valid Result from a Builder with a limit of 0" do
+    create_posts()
+
+    params = %{"limit" => 0}
+
+    result = Query.Ecto.Post
+    |> Query.builder(params)
+    |> Query.result()
+
+    assert 0 == Enum.count(result.data)
+    assert 0 == result.meta.page_total
+    assert 0 == result.meta.total_pages
+    assert 56 == result.meta.total
+    assert 1 == result.meta.page
+  end
+
   defp create_posts do
     Enum.map(1..50, fn i ->
       post = %Post{

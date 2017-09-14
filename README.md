@@ -85,7 +85,7 @@ iex(2)> Query.result(builder)
 %Query.Result{data: [
   %App.Post{body: "Body 1", id: 839, title: "Title 1"},
   %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
- meta: %{page: 1, page_total: 2, total: 2}}
+ meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
 ```
 
 ## Paging
@@ -97,7 +97,7 @@ iex(1)> App.Post
 |> Query.builder(%{"page" => 2, "limit" => 10})
 |> Query.result()
 
-%Query.Result{data: [], meta: %{page: 2, page_total: 0, total: 2}}
+%Query.Result{data: [], meta: %{page: 2, page_total: 0, total: 2, total_pages: 1}}
 ```
 
 We can configure all of our paging details.
@@ -120,7 +120,7 @@ iex(1)> App.Post
 |> Query.builder(%{"page" => 2, "per" => 10}, [paging: %{limit_param: "per"}])
 |> Query.result()
 
-%Query.Result{data: [], meta: %{page: 2, page_total: 0, total: 2}}
+%Query.Result{data: [], meta: %{page: 2, page_total: 0, total: 2, total_pages: 1}}
 ```
 
 ## Sorting
@@ -136,7 +136,7 @@ iex(1)> App.Post
 %Query.Result{data: [
   %App.Post{body: "Body 2", id: 840,title: "Title 2"},
   %App.Post{body: "Body 1", id: 839, title: "Title 1"}],
- meta: %{page: 1, page_total: 2, total: 2}}
+ meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
 ```
 
 We can configure all of our sorting details.
@@ -162,7 +162,7 @@ iex(1)> App.Post
 %Query.Result{data: [
   %App.Post{body: "Body 2", id: 840,title: "Title 2"},
   %App.Post{body: "Body 1", id: 839, title: "Title 1"}],
- meta: %{page: 1, page_total: 2, total: 2}}
+ meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
 ```
 
 ## Scoping
@@ -193,7 +193,7 @@ iex(1)> App.Post
 
 %Query.Result{data: [
   %App.Post{body: "Body 1", id: 839, title: "Title 1"}],
- meta: %{page: 1, page_total: 1, total: 2}}
+ meta: %{page: 1, page_total: 1, total: 2, total_pages: 1}}
 ```
 
 ## Installation
@@ -203,7 +203,7 @@ This package can be installed by adding `query` to your list of dependencies in 
 ```elixir
 def deps do
   [
-    {:query, "~> 0.1.1"}
+    {:query, "~> 0.1.2"}
   ]
 end
 ```
