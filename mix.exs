@@ -1,7 +1,7 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
-  @version "0.1.3"
+  @version "0.1.4"
 
   def project do
     [
@@ -61,7 +61,7 @@ defmodule Query.Mixfile do
     [
       {:ecto, "~> 2.1"},
       {:postgrex, "~> 0.13.0", only: :test},
-      {:ex_doc, ">= 0.0.0", only: :docs}
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 end
