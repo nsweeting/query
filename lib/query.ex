@@ -99,7 +99,7 @@ defmodule Query do
       %Query.Result{data: [
       %App.Post{body: "Body 1", title: "Title 1"},
       %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
-      meta: %{page: 1, page_total: 2, total: 2}}
+      meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
   """
   @spec builder(Query.Builder.t) :: Query.Result.t
   def result(builder) do

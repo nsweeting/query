@@ -1,10 +1,34 @@
 defmodule Query.Result.Meta do
-  @moduledoc false
+  @moduledoc """
+  The Query.Result.Meta is used to provide meta information about our results
+  and its paging.
+  """
+
+  @type t :: %{
+    total:       integer,
+    total_pages: integer,
+    page:        integer,
+    page_total:  integer
+  }
 
   import Ecto.Query, warn: false
 
   alias Query.Builder
 
+  @doc """
+  Creates a new meta map from a Query.Builder and data list.
+
+  ## Parameters
+
+    - builder: A Query.Builder struct.
+    - data: Our data list.
+
+  ## Examples
+
+      iex> Query.Result.Meta.new(builder, data)
+      %{page: 1, page_total: 2, total: 2, total_pages: 1}
+  """
+  @spec new(Query.Builder.t, list) :: Query.Result.Meta.t
   def new(%Builder{} = builder, data \\ []) do
     %{}
     |> put_total(builder)

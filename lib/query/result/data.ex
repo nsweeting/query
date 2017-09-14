@@ -5,6 +5,7 @@ defmodule Query.Result.Data do
 
   alias Query.Builder
 
+  @spec new(Query.Builder.t) :: list
   def new(%Builder{} = builder) do
     builder.queryable
     |> order_by(^builder.sorting)

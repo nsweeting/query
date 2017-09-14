@@ -1,10 +1,13 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
+  @version "0.1.3"
+
   def project do
     [
       app: :query,
-      version: "0.1.3",
+
+      version: @version,
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
       aliases: aliases(),
@@ -58,7 +61,7 @@ defmodule Query.Mixfile do
     [
       {:ecto, "~> 2.1"},
       {:postgrex, "~> 0.13.0", only: :test},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :docs}
     ]
   end
 end

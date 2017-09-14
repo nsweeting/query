@@ -1,9 +1,4 @@
 defmodule Query.Builder do
-  @moduledoc """
-  The Query.Builder is used to take query params, and ready them to create a
-  valid 
-  """
-
   @type param :: %{binary => binary}
 
   @type t :: %__MODULE__{
