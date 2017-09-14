@@ -4,7 +4,7 @@ defmodule Query.Mixfile do
   def project do
     [
       app: :query,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
       aliases: aliases(),
