@@ -39,15 +39,15 @@ defmodule Query.Builder.Sort do
     [{dir, sort}]
   end
 
-  def fetch_dir(params, options) when is_map(params) do
+  defp fetch_dir(params, options) when is_map(params) do
     dir = params[options.dir_param] || options.default_dir
     fetch_dir(dir, options)
   end
-  def fetch_dir("asc", _), do: :asc
-  def fetch_dir("desc", _), do: :desc
-  def fetch_dir(_, options), do: String.to_atom(options.default_dir)
+  defp fetch_dir("asc", _), do: :asc
+  defp fetch_dir("desc", _), do: :desc
+  defp fetch_dir(_, options), do: String.to_atom(options.default_dir)
 
-  def fetch_sort(params, options) when is_map(params) do
+  defp fetch_sort(params, options) when is_map(params) do
     sort_by = params[options.sort_param] || options.default_sort
     case Enum.member?(options.permitted, sort_by) do
       true  -> String.to_atom(sort_by)
