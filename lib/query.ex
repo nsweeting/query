@@ -58,6 +58,8 @@ defmodule Query do
   are querying with. In the above case, it would be "test".
   """
 
+  alias Query.{Builder, Result}
+
   @doc """
   Creates a new Query.Builder struct.
 
@@ -66,7 +68,6 @@ defmodule Query do
     - queryable: Any Ecto queryable.
     - params: A param map - most likely from a controller.
     - options: A keyword list of options.
-
 
   ## Options
     * `:repo` - the Ecto repo from which to work with.
@@ -83,7 +84,7 @@ defmodule Query do
   """
   @spec builder(Ecto.Queryable.t, Query.Builder.param, list) :: Query.Builder.t
   def builder(queryable, params \\ %{}, options \\ []) do
-    Query.Builder.new(queryable, params, options)
+    Builder.new(queryable, params, options)
   end
 
   @doc """
@@ -103,6 +104,6 @@ defmodule Query do
   """
   @spec builder(Query.Builder.t) :: Query.Result.t
   def result(builder) do
-    Query.Result.new(builder)
+    Result.new(builder)
   end
 end

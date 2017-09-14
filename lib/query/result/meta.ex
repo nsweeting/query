@@ -45,7 +45,7 @@ defmodule Query.Result.Meta do
     Map.put(meta, :total, total)
   end
 
-  defp put_total_pages(%{total: total} = meta, %Builder{limit: limit}) 
+  defp put_total_pages(%{total: total} = meta, %Builder{limit: limit})
   when limit > 0 do
     Map.put(meta, :total_pages, round(Float.ceil(total / limit)))
   end

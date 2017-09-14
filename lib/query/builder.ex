@@ -10,8 +10,10 @@ defmodule Query.Builder do
     repo:       atom,
     queryable:  Ecto.Queryable.t
   }
-  
+
   alias Query.Config
+  alias Query.Builder
+  alias Query.Builder.{Page, Scope, Sort}
 
   @defaults [
     paging: Config.get(:paging, %{}),
@@ -46,7 +48,7 @@ defmodule Query.Builder do
     sorting = Keyword.get(options, :sorting)
     scopes  = Keyword.get(options, :scopes)
 
-    %Query.Builder{}
+    %Builder{}
     |> put_queryable(queryable)
     |> put_repo(repo)
     |> put_paging(params, paging)
@@ -66,19 +68,19 @@ defmodule Query.Builder do
 
   @spec new(Query.Builder.t, param, map) :: Query.Builder.t
   def put_paging(builder, params, paging) do
-    {limit, offset, page} = Query.Builder.Page.new(params, paging)
+    {limit, offset, page} = Page.new(params, paging)
     %{builder | limit: limit, offset: offset, page: page}
   end
 
   @spec new(Query.Builder.t, param, map) :: Query.Builder.t
   def put_sorting(builder, params, sorting) do
-    sorting = Query.Builder.Sort.new(params, sorting)
+    sorting = Sort.new(params, sorting)
     %{builder | sorting: sorting}
   end
 
   @spec new(Query.Builder.t, param, list) :: Query.Builder.t
   def put_scopes(builder, params, scopes) do
-    scopes = Query.Builder.Scope.new(params, scopes)
+    scopes = Scope.new(params, scopes)
     %{builder | scopes: scopes}
   end
 end
