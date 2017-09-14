@@ -8,8 +8,9 @@ config :query, Query.Ecto.Repo, [
   adapter: Ecto.Adapters.Postgres,
   pool: Ecto.Adapters.SQL.Sandbox,
   database: "query_test",
-  username: "nick",
-  password: "nick"
+  hostname: "localhost",
+  username: "postgres",
+  password: ""
 ]
 
 config :logger, :console, [
