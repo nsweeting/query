@@ -7,6 +7,24 @@ Query adds simple tools to aid the use of Ecto in web settings. With it, we can
 add paging, scopes, and sorting with ease. At its heart, Query lets us build
 complex queries from our controller params.
 
+## Installation
+
+This package can be installed by adding `query` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:query, "~> 0.1.3"}
+  ]
+end
+```
+
+## Documentation
+
+See [HexDocs](https://hexdocs.pm/query/Query.html) for additional documentation.
+
+## Getting Started
+
 Before starting, we should configure Query. At a minimum, we need to add an Ecto
 Repo from which to work with. 
 
@@ -69,7 +87,7 @@ So given the above, we must have an `App.Context` module that contains a
 being an `Ecto.Queryable` and the second argument being the value that we
 are querying with. In the above case, it would be "test".
 
-## Basics
+## Builder and Result
 
 At the core of Query are the `Query.Builder` struct and `Query.Result` struct. We use
 the `Query.Builder` to compose our query, and the `Query.Result` to fetch our data.
@@ -199,19 +217,4 @@ iex(1)> App.Post
  meta: %{page: 1, page_total: 1, total: 2, total_pages: 1}}
 ```
 
-## Installation
-
-This package can be installed by adding `query` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:query, "~> 0.1.3"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/query](https://hexdocs.pm/query).
 
