@@ -14,7 +14,7 @@ defmodule Query.Builder do
     sorting:    nil,
     scopes:     nil,
     repo:       nil,
-    :queryable  nil
+    queryable:  nil
   ]
 
   @type param :: %{binary => binary}
