@@ -26,7 +26,7 @@ defmodule Query do
         use App, :controller
 
         @options [
-          sorting: %{permitted: ["id", "title", "created_at"]},
+          sorting: [permitted: ["id", "title", "created_at"]],
           scopes: [{App.Context, "by_title"}]
         ]
 
@@ -71,9 +71,9 @@ defmodule Query do
 
   ## Options
     * `:repo` - the Ecto repo from which to work with.
-    * `:paging` - a map of paging options. For more info, see __.
-    * `:sorting` - a map of sorting options. For more info, see __.
-    * `:scoping` - a map of scoping options. For more info, see __.
+    * `:paging` - a list of paging options. For more info, see __.
+    * `:sorting` - a list of sorting options. For more info, see __.
+    * `:scopes` - a list of scope options. For more info, see __.
 
   ## Examples
 

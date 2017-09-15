@@ -14,7 +14,7 @@ This package can be installed by adding `query` to your list of dependencies in 
 ```elixir
 def deps do
   [
-    {:query, "~> 0.1.4"}
+    {:query, "~> 0.1.5"}
   ]
 end
 ```
@@ -50,7 +50,7 @@ defmodule App.PostController do
   use App, :controller
 
   @options [
-    sorting: %{permitted: ["id", "title", "created_at"]},
+    sorting: [permitted: ["id", "title", "created_at"]],
     scopes: [{App.Context, "by_title"}]
   ]
 
@@ -125,12 +125,12 @@ We can configure all of our paging details.
 
 ```elixir
 config :query, [
-  paging: %{
+  paging: [
     default_page: 1,
     default_limit: 20,
     limit_param: "limit",
     page_param: "page"
-  }
+  ]
 ]
 ```
 
@@ -138,7 +138,7 @@ Alternatively, we can pass our paging config via options to the builder.
 
 ```elixir
 iex(1)> App.Post
-|> Query.builder(%{"page" => 2, "per" => 10}, [paging: %{limit_param: "per"}])
+|> Query.builder(%{"page" => 2, "per" => 10}, [paging: [limit_param: "per"]])
 |> Query.result()
 
 %Query.Result{data: [], meta: %{page: 2, page_total: 0, total: 2, total_pages: 1}}
@@ -151,7 +151,7 @@ whitelisted. We do this by passing the `[sorting: [permitted: []]]` options to o
 
 ```elixir
 iex(1)> App.Post
-|> Query.builder(%{"sort_by" => "id", "direction" => "desc"}, [sorting: %{permitted: ["id", "title"]}])
+|> Query.builder(%{"sort_by" => "id", "direction" => "desc"}, [sorting: [permitted: ["id", "title"]]])
 |> Query.result()
 
 %Query.Result{data: [
@@ -164,12 +164,12 @@ We can configure all of our sorting details.
 
 ```elixir
 config :query, [
-  sorting: %{
+  sorting: [
     default_sort: "id",
     default_dir: "asc",
     sort_param: "sort_by",
     dir_param: "direction"
-  }
+  ]
 ]
 ```
 
@@ -177,7 +177,7 @@ Alternatively, we can pass our sorting config via options to the builder.
 
 ```elixir
 iex(1)> App.Post
-|> Query.builder(%{"sort_by" => "id", "dir" => "desc"}, [sorting: %{dir_param: "dir", permitted: ["id", "title"]}])
+|> Query.builder(%{"sort_by" => "id", "dir" => "desc"}, [sorting: [dir_param: "dir", permitted: ["id", "title"]]])
 |> Query.result()
 
 %Query.Result{data: [

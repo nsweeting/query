@@ -3,12 +3,12 @@ defmodule Query.Builder.Page do
   Provides paging details for our Query.Builder.
   """
 
-  @defaults %{
+  @defaults [
     default_page: 1,
     default_limit: 20,
     limit_param: "limit",
     page_param: "page"
-  }
+  ]
 
   @doc """
   Provides paging details based on the provided params and options.
@@ -16,7 +16,7 @@ defmodule Query.Builder.Page do
   ## Parameters
 
     - params: A param map - most likely from a controller.
-    - options: A map of options.
+    - options: A list of options.
 
   ## Options
     * `:default_page` - the default page if none is provided. Defaults to 1.
@@ -29,8 +29,9 @@ defmodule Query.Builder.Page do
       iex> Query.Builder.Page.new(%{"page" => 2, "per" => 10}, %{"limit_param" => "per"})
       {10, 20, 2}
   """
-  def new(params \\ %{}, options \\ %{}) do
-    options = Map.merge(@defaults, options)
+  @spec new(Query.Builder.param, list) :: {integer, integer, integer}
+  def new(params \\ %{}, options \\ []) do
+    options = Keyword.merge(@defaults, options)
     page    = fetch_page(params, options)
     limit   = fetch_limit(params, options)
     offset  = (page - 1) * limit
@@ -38,23 +39,29 @@ defmodule Query.Builder.Page do
   end
 
   defp fetch_page(params, options) do
-    page = params[options.page_param] || options.default_page
-    parse_integer(page, options.default_page)
+    page_param  = Keyword.fetch!(options, :page_param)
+    get_and_parse(params, page_param) || Keyword.fetch!(options, :default_page)
   end
 
   defp fetch_limit(params, options) do
-    limit = params[options.limit_param] || options.default_limit
-    parse_integer(limit, options.default_limit)
-    if limit <= options.default_limit, do: limit, else: options.default_limit
+    limit_param   = Keyword.fetch!(options, :limit_param)
+    default_limit = Keyword.fetch!(options, :default_limit)
+    limit         = get_and_parse(params, limit_param) || default_limit
+    if limit <= default_limit, do: limit, else: default_limit
   end
 
-  defp parse_integer(integer, _) when is_integer(integer) do
-    integer
+  defp get_and_parse(params, key) do
+     params
+     |> Map.get(key)
+     |> parse_integer()
   end
-  defp parse_integer(string, default) when is_binary(string) do
+
+  defp parse_integer(integer) when is_integer(integer), do: integer
+  defp parse_integer(string) when is_binary(string) do
     case Integer.parse(string) do
       {integer, _} -> integer
-      _            -> default
+      _            -> nil
     end
   end
+  defp parse_integer(_), do: nil
 end
