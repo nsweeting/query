@@ -1,19 +1,19 @@
 defmodule Query.Result do
   @moduledoc false
 
-  @type t :: %__MODULE__{
-    data:       list,
-    meta:       map
-  }
-
   alias Query.Result
   alias Query.Builder
   alias Query.Result.{Data, Meta}
 
   defstruct [
-    :data,
-    :meta
+    data:       nil,
+    meta:       nil
   ]
+
+  @type t :: %__MODULE__{
+    data:       list,
+    meta:       map
+  }
 
   @spec new(Query.Builder.t) :: Query.Result.t
   def new(%Builder{} = builder) do

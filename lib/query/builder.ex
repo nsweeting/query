@@ -1,8 +1,23 @@
 defmodule Query.Builder do
-  @moduledoc false
+  @moduledoc """
+  The Query.Builder takes our user-provided params, as well as our options,
+  """
+
+  alias Query.Config
+  alias Query.Builder
+  alias Query.Builder.{Page, Scope, Sort}
+
+  defstruct [
+    page:       nil,
+    limit:      nil,
+    offset:     nil,
+    sorting:    nil,
+    scopes:     nil,
+    repo:       nil,
+    :queryable  nil
+  ]
 
   @type param :: %{binary => binary}
-
   @type t :: %__MODULE__{
     page:       integer,
     limit:      integer,
@@ -13,25 +28,11 @@ defmodule Query.Builder do
     queryable:  Ecto.Queryable.t
   }
 
-  alias Query.Config
-  alias Query.Builder
-  alias Query.Builder.{Page, Scope, Sort}
-
   @defaults [
-    paging: Config.get(:paging, %{}),
-    sorting: Config.get(:sorting, %{}),
-    repo: Config.get(:repo),
-    scopes: []
-  ]
-
-  defstruct [
-    :page,
-    :limit,
-    :offset,
-    :sorting,
-    :scopes,
-    :repo,
-    :queryable
+    paging:     Config.get(:paging, %{}),
+    sorting:    Config.get(:sorting, %{}),
+    repo:       Config.get(:repo),
+    scopes:     []
   ]
 
   @spec new(Ecto.Queryable.t, param, list) :: Query.Builder.t

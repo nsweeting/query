@@ -3,16 +3,16 @@ defmodule Query.Result.Meta do
   Provides paging meta for our Query.Result.
   """
 
+  import Ecto.Query, warn: false
+
+  alias Query.Builder
+
   @type t :: %{
     total:       integer,
     total_pages: integer,
     page:        integer,
     page_total:  integer
   }
-
-  import Ecto.Query, warn: false
-
-  alias Query.Builder
 
   @doc """
   Creates a new meta map from a Query.Builder and data list.
