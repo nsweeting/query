@@ -16,6 +16,7 @@ defmodule Query.Builder.Scope do
       iex> Query.Builder.Scope.new(%{"by_title" => "title"}, [{App.Context, "by_title"}, {App.Context, "by_name"}])
       [{App.Context, :by_title, ["title"]}]
   """
+  @spec new(Query.Builder.param, list) :: list
   def new(params \\ %{}, scopes \\ [])
   def new(params, scopes)
   when is_map(params) and is_list(scopes) do

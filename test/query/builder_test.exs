@@ -15,7 +15,7 @@ defmodule Query.BuilderTest do
   end
 
   test "creating a Builder with paging options will use the options" do
-    builder = Query.Builder.new(Query.Ecto.Post, %{}, paging: %{default_limit: 50})
+    builder = Query.Builder.new(Query.Ecto.Post, %{}, paging: [default_limit: 50])
     assert 50 == builder.limit
     assert 0 == builder.offset
     assert 1 == builder.page
@@ -27,7 +27,7 @@ defmodule Query.BuilderTest do
   end
 
   test "creating a Builder with sorting options will use the options" do
-    builder = Query.Builder.new(Query.Ecto.Post, %{}, sorting: %{default_dir: "desc"})
+    builder = Query.Builder.new(Query.Ecto.Post, %{}, sorting: [default_dir: "desc"])
     assert [desc: :id] == builder.sorting
   end
 

@@ -29,8 +29,8 @@ defmodule Query.Builder do
   }
 
   @defaults [
-    paging:     Config.get(:paging, %{}),
-    sorting:    Config.get(:sorting, %{}),
+    paging:     Config.get(:paging, []),
+    sorting:    Config.get(:sorting, []),
     repo:       Config.get(:repo),
     scopes:     []
   ]
@@ -69,13 +69,13 @@ defmodule Query.Builder do
     %{builder | repo: repo}
   end
 
-  @spec new(Query.Builder.t, param, map) :: Query.Builder.t
+  @spec new(Query.Builder.t, param, list) :: Query.Builder.t
   def put_paging(builder, params, paging) do
     {limit, offset, page} = Page.new(params, paging)
     %{builder | limit: limit, offset: offset, page: page}
   end
 
-  @spec new(Query.Builder.t, param, map) :: Query.Builder.t
+  @spec new(Query.Builder.t, param, list) :: Query.Builder.t
   def put_sorting(builder, params, sorting) do
     sorting = Sort.new(params, sorting)
     %{builder | sorting: sorting}
