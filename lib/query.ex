@@ -126,10 +126,11 @@ defmodule Query do
 
   ## Examples
 
-      iex> Query.builder(App.Post)
-      %Query.Builder{limit: 20, offset: 0, page: 1,
-      queryable: #Ecto.Query<from p in App.Post>, repo: App.Repo,
-      scopes: [], sorting: [asc: :id]}
+      iex> Query.run(App.Post)
+      %Query.Result{data: [
+      %App.Post{body: "Body 1", title: "Title 1"},
+      %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
+      meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
   """
   @spec builder(Ecto.Queryable.t, Query.Builder.param, list) :: Query.Result.t
   def run(queryable, params \\ %{}, options \\ []) do
