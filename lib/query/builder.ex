@@ -28,13 +28,6 @@ defmodule Query.Builder do
     queryable:  Ecto.Queryable.t
   }
 
-  @defaults [
-    paging:     Config.get(:paging, []),
-    sorting:    Config.get(:sorting, []),
-    repo:       Config.get(:repo),
-    scopes:     []
-  ]
-
   @spec new(Ecto.Queryable.t, param, list) :: Query.Builder.t
   def new(_, params \\ %{}, options \\ [])
   def new(queryable, params, options)
@@ -45,7 +38,8 @@ defmodule Query.Builder do
   end
   def new(queryable, params, options)
   when is_map(params) and is_list(options) do
-    options = Keyword.merge(@defaults, options)
+    options = Config.options(:builder, options)
+
     repo    = Keyword.get(options, :repo)
     paging  = Keyword.get(options, :paging)
     sorting = Keyword.get(options, :sorting)

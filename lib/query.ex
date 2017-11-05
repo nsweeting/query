@@ -106,4 +106,35 @@ defmodule Query do
   def result(builder) do
     Result.new(builder)
   end
+
+  @doc """
+  Creates a new Query.Builder struct, runs it, and returns a Query.Result struct.
+
+  This is a shortend version of `App.Post |> Query.builder() |> Query.result()`
+
+  ## Parameters
+
+    - queryable: Any Ecto queryable.
+    - params: A param map - most likely from a controller.
+    - options: A keyword list of options.
+
+  ## Options
+    * `:repo` - the Ecto repo from which to work with.
+    * `:paging` - a list of paging options. For more info, see __.
+    * `:sorting` - a list of sorting options. For more info, see __.
+    * `:scopes` - a list of scope options. For more info, see __.
+
+  ## Examples
+
+      iex> Query.builder(App.Post)
+      %Query.Builder{limit: 20, offset: 0, page: 1,
+      queryable: #Ecto.Query<from p in App.Post>, repo: App.Repo,
+      scopes: [], sorting: [asc: :id]}
+  """
+  @spec builder(Ecto.Queryable.t, Query.Builder.param, list) :: Query.Result.t
+  def run(queryable, params \\ %{}, options \\ []) do
+    queryable
+    |> builder(params, options)
+    |> result()
+  end
 end
