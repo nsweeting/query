@@ -13,7 +13,7 @@ defmodule Query.Ecto.TestCase do
   end
 end
 
-Query.Ecto.Repo.start_link
+Query.Ecto.Repo.start_link()
 Ecto.Adapters.SQL.Sandbox.mode(Query.Ecto.Repo, :manual)
 
 ExUnit.start()

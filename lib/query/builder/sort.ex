@@ -32,31 +32,33 @@ defmodule Query.Builder.Sort do
       iex> Query.Builder.Sort.new(%{"sort_by" => "title", "direction" => "desc"}, %{permitted: ["title"]})
       [{:desc, :title}]
   """
-  @spec new(Query.Builder.param, list) :: [{atom, atom}]
+  @spec new(Query.Builder.param(), list) :: [{atom, atom}]
   def new(params \\ %{}, options \\ []) do
     options = Keyword.merge(@defaults, options)
-    dir     = fetch_dir(params, options)
-    sort    = fetch_sort(params, options)
+    dir = fetch_dir(params, options)
+    sort = fetch_sort(params, options)
     [{dir, sort}]
   end
 
   defp fetch_dir(params, options) when is_map(params) do
-    dir_param    = Keyword.fetch!(options, :dir_param)
-    default_dir  = Keyword.fetch!(options, :default_dir)
-    dir          = Map.get(params, dir_param) || default_dir
+    dir_param = Keyword.fetch!(options, :dir_param)
+    default_dir = Keyword.fetch!(options, :default_dir)
+    dir = Map.get(params, dir_param) || default_dir
     fetch_dir(dir, default_dir)
   end
+
   defp fetch_dir("asc", _), do: :asc
   defp fetch_dir("desc", _), do: :desc
   defp fetch_dir(_, default_dir), do: String.to_atom(default_dir)
 
   defp fetch_sort(params, options) when is_map(params) do
-    sort_param   = Keyword.fetch!(options, :sort_param)
+    sort_param = Keyword.fetch!(options, :sort_param)
     default_sort = Keyword.fetch!(options, :default_sort)
-    permitted    = Keyword.fetch!(options, :permitted)
-    sort_by      = Map.get(params, sort_param) || default_sort
+    permitted = Keyword.fetch!(options, :permitted)
+    sort_by = Map.get(params, sort_param) || default_sort
+
     case Enum.member?(permitted, sort_by) do
-      true  -> String.to_atom(sort_by)
+      true -> String.to_atom(sort_by)
       false -> String.to_atom(default_sort)
     end
   end

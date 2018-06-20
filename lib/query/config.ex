@@ -3,11 +3,12 @@ defmodule Query.Config do
 
   def options(:builder, opts \\ []) do
     [
-      paging:  get(:paging, []),
+      paging: get(:paging, []),
       sorting: get(:sorting, []),
-      repo:    get(:repo),
-      scopes:  []
-    ] |> Keyword.merge(opts)
+      repo: get(:repo),
+      scopes: []
+    ]
+    |> Keyword.merge(opts)
   end
 
   def get(key, default \\ nil) do

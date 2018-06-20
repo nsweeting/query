@@ -2,9 +2,9 @@ defmodule Query.Ecto.Comment do
   use Ecto.Schema
 
   schema "comments" do
-    field :body, :string
+    field(:body, :string)
 
-    belongs_to :post, Query.Ecto.Post
+    belongs_to(:post, Query.Ecto.Post)
 
     timestamps()
   end

@@ -16,18 +16,20 @@ defmodule Query.Builder.Scope do
       iex> Query.Builder.Scope.new(%{"by_title" => "title"}, [{App.Context, "by_title"}, {App.Context, "by_name"}])
       [{App.Context, :by_title, ["title"]}]
   """
-  @spec new(Query.Builder.param, list) :: list
   def new(params \\ %{}, scopes \\ [])
+
   def new(params, scopes)
-  when is_map(params) and is_list(scopes) do
+      when is_map(params) and is_list(scopes) do
     scopes
     |> Enum.flat_map(&new(params, &1))
     |> Enum.reject(&is_nil/1)
   end
+
   def new(params, scope)
-  when is_map(params) and is_tuple(scope) do
+      when is_map(params) and is_tuple(scope) do
     Enum.map(params, &new(&1, scope))
   end
+
   def new({query, value}, {context, scope}) do
     if query == scope, do: {context, String.to_atom(scope), [value]}, else: nil
   end

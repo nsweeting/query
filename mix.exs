@@ -1,19 +1,18 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
-  @version "0.1.6"
+  @version "0.1.7"
 
   def project do
     [
       app: :query,
-
       version: @version,
       elixir: "~> 1.5",
-      elixirc_paths: elixirc_paths(Mix.env),
+      elixirc_paths: elixirc_paths(Mix.env()),
       aliases: aliases(),
       description: description(),
       package: package(),
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
   end
@@ -21,7 +20,7 @@ defmodule Query.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: applications(Mix.env)
+      extra_applications: applications(Mix.env())
     ]
   end
 
@@ -36,7 +35,7 @@ defmodule Query.Mixfile do
       files: ["lib", "mix.exs", "README*"],
       maintainers: ["Nicholas Sweeting"],
       licenses: ["MIT"],
-      links:  %{"GitHub" => "https://github.com/nsweeting/query"}
+      links: %{"GitHub" => "https://github.com/nsweeting/query"}
     ]
   end
 

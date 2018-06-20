@@ -5,7 +5,7 @@ defmodule Query.Result.Data do
 
   alias Query.Builder
 
-  @spec new(Query.Builder.t) :: list
+  @spec new(Query.Builder.t()) :: list
   def new(%Builder{} = builder) do
     builder.queryable
     |> order_by(^builder.sorting)
@@ -16,8 +16,9 @@ defmodule Query.Result.Data do
   end
 
   defp with_scopes(queryable, scopes) when is_list(scopes) do
-    Enum.reduce(scopes, queryable, fn({context, scope, [value]}, queryable) ->
+    Enum.reduce(scopes, queryable, fn {context, scope, [value]}, queryable ->
       funcs = context.module_info(:exports)
+
       case Keyword.get(funcs, scope) do
         2 -> apply(context, scope, [queryable, value])
         _ -> queryable

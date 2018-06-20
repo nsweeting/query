@@ -10,16 +10,18 @@ defmodule Query.ResultTest do
     params = %{"published" => false, "page" => 2}
     options = [scopes: [{Query.Context, "published"}]]
 
-    result = Query.Ecto.Post
-    |> Query.builder(params, options)
-    |> Query.result()
+    result =
+      Query.Ecto.Post
+      |> Query.builder(params, options)
+      |> Query.result()
 
     assert 20 == Enum.count(result.data)
     assert 20 == result.meta.page_total
     assert 3 == result.meta.total_pages
     assert 56 == result.meta.total
     assert 2 == result.meta.page
-    Enum.each(result.data, fn post -> 
+
+    Enum.each(result.data, fn post ->
       assert post.published == false
     end)
   end
@@ -30,16 +32,18 @@ defmodule Query.ResultTest do
     params = %{"published" => true}
     options = [scopes: [{Query.Context, "published"}]]
 
-    result = Query.Ecto.Post
-    |> Query.builder(params, options)
-    |> Query.result()
+    result =
+      Query.Ecto.Post
+      |> Query.builder(params, options)
+      |> Query.result()
 
     assert 6 == Enum.count(result.data)
     assert 6 == result.meta.page_total
     assert 3 == result.meta.total_pages
     assert 56 == result.meta.total
     assert 1 == result.meta.page
-    Enum.each(result.data, fn post -> 
+
+    Enum.each(result.data, fn post ->
       assert post.published == true
     end)
   end
@@ -49,9 +53,10 @@ defmodule Query.ResultTest do
 
     params = %{"limit" => 2}
 
-    result = Query.Ecto.Post
-    |> Query.builder(params)
-    |> Query.result()
+    result =
+      Query.Ecto.Post
+      |> Query.builder(params)
+      |> Query.result()
 
     assert 2 == Enum.count(result.data)
     assert 2 == result.meta.page_total
@@ -65,9 +70,10 @@ defmodule Query.ResultTest do
 
     params = %{"limit" => 0}
 
-    result = Query.Ecto.Post
-    |> Query.builder(params)
-    |> Query.result()
+    result =
+      Query.Ecto.Post
+      |> Query.builder(params)
+      |> Query.result()
 
     assert 0 == Enum.count(result.data)
     assert 0 == result.meta.page_total
@@ -78,17 +84,20 @@ defmodule Query.ResultTest do
 
   defp create_posts do
     Enum.map(1..50, fn i ->
-      post = %Post{
-        title: "Title #{i}",
-        body: "Body #{i}",
-        published: false
-      } |> Query.Ecto.Repo.insert!
+      post =
+        %Post{
+          title: "Title #{i}",
+          body: "Body #{i}",
+          published: false
+        }
+        |> Query.Ecto.Repo.insert!()
 
       Enum.map(1..2, fn i ->
         %Comment{
           body: "Body #{i}",
           post_id: post.id
-        } |> Query.Ecto.Repo.insert!
+        }
+        |> Query.Ecto.Repo.insert!()
       end)
     end)
 
@@ -97,7 +106,8 @@ defmodule Query.ResultTest do
         title: "Title #{i}",
         body: "Body #{i}",
         published: true
-      } |> Query.Ecto.Repo.insert!
+      }
+      |> Query.Ecto.Repo.insert!()
     end)
   end
 end

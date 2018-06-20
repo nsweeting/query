@@ -5,7 +5,7 @@ defmodule Query do
   complex queries from our controller params.
 
   Before starting, we should configure Query. At a minimum, we need to add an Ecto
-  Repo from which to work with. 
+  Repo from which to work with.
 
       config :query, [
         repo: App.Repo
@@ -37,7 +37,7 @@ defmodule Query do
           render(conn, "index.json", result: result)
         end
       end
-  
+
   Given the controller above, we can now pass the following query options.
 
   `/posts?sort_by=created_at&direction=desc&by_title=test`
@@ -82,7 +82,7 @@ defmodule Query do
       queryable: #Ecto.Query<from p in App.Post>, repo: App.Repo,
       scopes: [], sorting: [asc: :id]}
   """
-  @spec builder(Ecto.Queryable.t, Query.Builder.param, list) :: Query.Builder.t
+  @spec builder(Ecto.Queryable.t(), Query.Builder.param(), list) :: Query.Builder.t()
   def builder(queryable, params \\ %{}, options \\ []) do
     Builder.new(queryable, params, options)
   end
@@ -102,7 +102,7 @@ defmodule Query do
       %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
       meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
   """
-  @spec builder(Query.Builder.t) :: Query.Result.t
+  @spec result(builder :: Query.Builder.t()) :: Query.Result.t()
   def result(builder) do
     Result.new(builder)
   end
@@ -132,7 +132,8 @@ defmodule Query do
       %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
       meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
   """
-  @spec builder(Ecto.Queryable.t, Query.Builder.param, list) :: Query.Result.t
+  @spec run(queryable :: Ecto.Queryable.t(), params :: Query.Builder.param(), list) ::
+          result :: Query.Result.t() | no_return()
   def run(queryable, params \\ %{}, options \\ []) do
     queryable
     |> builder(params, options)
