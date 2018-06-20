@@ -1,7 +1,7 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
-  @version "0.1.7"
+  @version "0.1.6"
 
   def project do
     [
