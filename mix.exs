@@ -60,7 +60,7 @@ defmodule Query.Mixfile do
     [
       {:ecto, "~> 2.1"},
       {:postgrex, "~> 0.13.0", only: :test},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false}
     ]
   end
 end
