@@ -6,6 +6,7 @@ defmodule Query.Result.Meta do
   import Ecto.Query, warn: false
 
   alias Query.Builder
+  alias Query.Result.Data
 
   @type t :: %{
           total: integer,
@@ -36,11 +37,12 @@ defmodule Query.Result.Meta do
     |> put_page_total(data)
   end
 
-  defp put_total(meta, %Builder{queryable: queryable, repo: repo}) do
+  defp put_total(meta, %Builder{} = builder) do
     total =
-      queryable
+      builder
+      |> Data.with_scopes()
       |> select(count("*"))
-      |> repo.one()
+      |> builder.repo.one()
 
     Map.put(meta, :total, total)
   end

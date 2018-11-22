@@ -18,7 +18,7 @@ defmodule Query.ResultTest do
     assert 20 == Enum.count(result.data)
     assert 20 == result.meta.page_total
     assert 3 == result.meta.total_pages
-    assert 56 == result.meta.total
+    assert 50 == result.meta.total
     assert 2 == result.meta.page
 
     Enum.each(result.data, fn post ->
@@ -39,8 +39,8 @@ defmodule Query.ResultTest do
 
     assert 6 == Enum.count(result.data)
     assert 6 == result.meta.page_total
-    assert 3 == result.meta.total_pages
-    assert 56 == result.meta.total
+    assert 1 == result.meta.total_pages
+    assert 6 == result.meta.total
     assert 1 == result.meta.page
 
     Enum.each(result.data, fn post ->

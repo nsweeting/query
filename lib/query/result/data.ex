@@ -7,16 +7,17 @@ defmodule Query.Result.Data do
 
   @spec new(Query.Builder.t()) :: list
   def new(%Builder{} = builder) do
-    builder.queryable
+    builder
+    |> with_scopes()
     |> order_by(^builder.sorting)
     |> limit(^builder.limit)
     |> offset(^builder.offset)
-    |> with_scopes(builder.scopes)
     |> builder.repo.all()
   end
 
-  defp with_scopes(queryable, scopes) when is_list(scopes) do
-    Enum.reduce(scopes, queryable, fn {context, scope, [value]}, queryable ->
+  @spec with_scopes(Query.Builder.t()) :: Ecto.Query.t()
+  def with_scopes(%Builder{} = builder) do
+    Enum.reduce(builder.scopes, builder.queryable, fn {context, scope, [value]}, queryable ->
       funcs = context.module_info(:exports)
 
       case Keyword.get(funcs, scope) do
