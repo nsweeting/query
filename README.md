@@ -14,7 +14,7 @@ This package can be installed by adding `query` to your list of dependencies in 
 ```elixir
 def deps do
   [
-    {:query, "~> 0.1.7"}
+    {:query, "~> 0.2.0"}
   ]
 end
 ```
@@ -216,5 +216,3 @@ iex(1)> App.Post
   %App.Post{body: "Body 1", id: 839, title: "Title 1"}],
  meta: %{page: 1, page_total: 1, total: 2, total_pages: 1}}
 ```
-
-
