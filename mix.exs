@@ -1,7 +1,7 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.3.0"
 
   def project do
     [
@@ -58,8 +58,9 @@ defmodule Query.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto, "~> 2.2"},
-      {:postgrex, "~> 0.13.0", only: :test},
+      {:ecto, "~> 3.0"},
+      {:ecto_sql, "~> 3.0", only: :test},
+      {:postgrex, "~> 0.14.1", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
