@@ -2,28 +2,32 @@ defmodule Query.Result do
   @moduledoc false
 
   alias Query.Result
-  alias Query.Builder
   alias Query.Result.{Data, Meta}
 
-  defstruct data: nil,
-            meta: nil
+  defstruct [
+    :data,
+    :meta
+  ]
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+          data: list() | nil,
+          meta: Query.Result.Meta.t() | nil
+        }
 
-  @spec new(builder :: Query.Builder.t()) :: Query.Result.t()
-  def new(%Builder{} = builder) do
+  @spec new(Query.t()) :: Query.Result.t()
+  def new(query) do
     %Result{}
-    |> put_data(builder)
-    |> put_meta(builder)
+    |> put_data(query)
+    |> put_meta(query)
   end
 
-  @spec put_data(result :: Query.Result.t(), builder :: Query.Builder.t()) :: Query.Result.t()
-  def put_data(%Result{} = result, %Builder{} = builder) do
-    %{result | data: Data.new(builder)}
+  @spec put_data(Query.Result.t(), Query.t()) :: Query.Result.t()
+  def put_data(result, query) do
+    %{result | data: Data.new(query)}
   end
 
-  @spec put_meta(result :: Query.Result.t(), builder :: Query.Builder.t()) :: Query.Result.t()
-  def put_meta(%Result{data: data} = result, %Builder{} = builder) do
-    %{result | meta: Meta.new(builder, data)}
+  @spec put_meta(Query.Result.t(), Query.t()) :: Query.Result.t()
+  def put_meta(result, query) do
+    %{result | meta: Meta.new(query, result.data)}
   end
 end

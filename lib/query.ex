@@ -1,142 +1,185 @@
 defmodule Query do
   @moduledoc """
-  Query adds simple tools to aid the use of Ecto in web settings. With it, we can
-  add paging, scopes, and sorting with ease. At its heart, Query lets us build
-  complex queries from our controller params.
+  Query aids the use of Ecto in web settings.
 
-  Before starting, we should configure Query. At a minimum, we need to add an Ecto
-  Repo from which to work with.
+  With it, we can add paging, sorting, and scoping with ease. At its heart, Query
+  lets us build complex queries from our controller params.
 
-      config :query, [
-        repo: App.Repo
-      ]
+  ## Example
 
-  Query is split into two main components:
-
-    * `Query.Builder` - the builder readies our query paging, sorting, and
-    scopes based on the provided params. The builder does not touch the database.
-
-    * `Query.Result` - the result takes our builder, composes the final query,
-    and fetches the data from our repo. It will also provide additional meta
-    details that we can provide back to the user.
-
-  We can now compose complex queries from our controller.
+  Functionality is conducted through one main function `Query.run/4`:
 
       defmodule App.PostController do
         use App, :controller
 
         @options [
-          sorting: [permitted: ["id", "title", "created_at"]],
-          scopes: [{App.Context, "by_title"}]
+          sort_permitted: ["id", "title", "inserted_at"],
+          scope_permitted: ["by_title"],
+          scope: {App.Context, :query}
         ]
 
         def index(conn, params) do
-          result = App.Post
-          |> Query.builder(params, @options)
-          |> Query.result()
-          render(conn, "index.json", result: result)
+          result = Query.run(Post, Repo, params, @options)
+          render(conn, "index.json", posts: result)
         end
       end
 
   Given the controller above, we can now pass the following query options.
 
-  `/posts?sort_by=created_at&direction=desc&by_title=test`
+  `/posts?sort_by=inserted_at&direction=desc&by_title=test`
 
-  We are able to sort by `created_at`, as we permitted it in our sorting options.
-  By default, we are not allowed to sort by any attribute. They must be whitelisted
-  first.
-
-  We are also able to pass the `by_title` query param. Once again, this is only
-  possible as we whitelisted it in our list of scopes. Scopes are passed in the
-  following format: `{App.Context, "by_title"}`. The first item in the tuple is
-  the module that contains the function from which we will use to query against.
-  The second item is the query param as well as function name.
-
-  So given the above, we must have an `App.Context` module that contains a
-  `by_title` function. This function must have an arity of 2 - with the first argument
-  being an `Ecto.Queryable` and the second argument being the value that we
-  are querying with. In the above case, it would be "test".
+  Further documentation to come...
   """
 
-  alias Query.{Builder, Result}
+  defstruct [
+    :page,
+    :limit,
+    :offset,
+    :sorting,
+    :scoping,
+    :count,
+    :count_limit,
+    :count_column,
+    :repo,
+    :queryable
+  ]
+
+  alias Query.{Paging, Result, Scoping, Sorting}
+
+  @type t :: %__MODULE__{}
+  @type params :: %{binary => binary}
+  @type option ::
+          {:page_default, non_neg_integer()}
+          | {:page_param, binary()}
+          | {:limit_default, non_neg_integer()}
+          | {:limit_max, non_neg_integer()}
+          | {:limit_param, binary()}
+          | {:sort_default, binary()}
+          | {:sort_param, binary()}
+          | {:sort_permitted, [binary()]}
+          | {:dir_default, binary()}
+          | {:dir_param, binary()}
+          | {:count, boolean()}
+          | {:count_limit, :infinite | non_neg_integer()}
+          | {:scoping, {module(), atom()}}
+          | {:scopes, [{module(), binary()}]}
+  @type options :: [option()]
+
+  @app_config Application.get_all_env(:query)
+  @opts_schema %{
+    page_default: [default: 1, type: :integer],
+    page_param: [default: "page", type: :binary],
+    limit_default: [default: 20, type: :integer],
+    limit_max: [default: 50, type: :integer],
+    limit_param: [default: "limit", type: :binary],
+    sort_default: [default: "id", type: :binary],
+    sort_param: [default: "sort_by", type: :binary],
+    sort_permitted: [default: [], type: {:list, :binary}],
+    dir_default: [default: "asc", type: :binary],
+    dir_param: [default: "dir", type: :binary],
+    count: [default: true, type: :boolean],
+    count_limit: [default: :infinite, type: [:atom, :integer]],
+    count_column: [default: :id, type: :atom],
+    scope: [required: false, type: [{:tuple, {:atom, :atom}}]],
+    scope_permitted: [default: [], type: {:list, :binary}]
+  }
 
   @doc """
-  Creates a new Query.Builder struct.
+  Fetches data from the given repository based on the params and options given.
 
-  ## Parameters
-
-    - queryable: Any Ecto queryable.
-    - params: A param map - most likely from a controller.
-    - options: A keyword list of options.
+  This provides an easy way to performing paging, sorting, and scoping all from
+  binary maps - typically given from controller params.
 
   ## Options
-    * `:repo` - the Ecto repo from which to work with.
-    * `:paging` - a list of paging options. For more info, see __.
-    * `:sorting` - a list of sorting options. For more info, see __.
-    * `:scopes` - a list of scope options. For more info, see __.
+    * `:page_default` - the default page if none is provided - defaults to 1
+    * `:page_param` - the param key to use for the page - defaults to "page"
+    * `:limit_default` - the default limit if none is provided - defaults to 20
+    * `:limit_param` - the param key to use for the limit - defaults to "limit"
+    * `:limit_max` - the maximum allowed limit - defaults to 50
+    * `:sort_default` - the default sort attribute if none is provided - defaults to "id"
+    * `:sort_param` - the param key to use for the sort - defaults to "sort_by"
+    * `:sort_permitted` - a list of permitted attributes that we can sort on
+    * `:dir_default` - the default direction - defaults to "asc"
+    * `:dir_param` - the param key to use for the direction - defaults to "dir"
+    * `:count` - whether or not to fetch the total number of records - defaults to `true`
+    * `:count_limit` - the maximum number of records to count - defaults to  `:infinite`
+    * `:count_column` - the column used to perform the count on
+    * `:scope_permitted` - a list of permitted params that we can scope on
+    * `:scope` - a `{module, function}` with an arity of 2, that will be passed an
+      `Ecto.Query` as well as a map of the permitted scopes. You can then perform
+      custom queries with these params
 
   ## Examples
 
-      iex> Query.builder(App.Post)
-      %Query.Builder{limit: 20, offset: 0, page: 1,
-      queryable: #Ecto.Query<from p in App.Post>, repo: App.Repo,
-      scopes: [], sorting: [asc: :id]}
+      iex> Query.run(App.Post, App.Repo)
+      %Query.Result{data: ...results of query, meta: ...paging attributes}
+
+      iex> Query.run(App.Post, App.Repo, %{"page" => 2, "sort_by" => "some_attr"}, sort_permitted: ["some_attr"])
+      %Query.Result{data: ...results of query, meta: ...paging attributes}
+
+      iex> Query.run(App.Post, App.Repo, %{"published" => true}, scope: {App.Context, :with_scope}, scope_permitted: ["published"])
+      %Query.Result{data: ...results of query, meta: ...paging attributes}
   """
-  @spec builder(Ecto.Queryable.t(), Query.Builder.param(), list) :: Query.Builder.t()
-  def builder(queryable, params \\ %{}, options \\ []) do
-    Builder.new(queryable, params, options)
-  end
+  @spec run(Ecto.Queryable.t(), Ecto.Repo.t(), params(), options()) :: Query.Result.t()
+  def run(_, _, params \\ %{}, opts \\ [])
 
-  @doc """
-  Creates a new Query.Result struct from a Query.Builder.
-
-  ## Parameters
-
-    - builder: A Query.Builder struct.
-
-  ## Examples
-
-      iex> Query.result(builder)
-      %Query.Result{data: [
-      %App.Post{body: "Body 1", title: "Title 1"},
-      %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
-      meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
-  """
-  @spec result(builder :: Query.Builder.t()) :: Query.Result.t()
-  def result(builder) do
-    Result.new(builder)
-  end
-
-  @doc """
-  Creates a new Query.Builder struct, runs it, and returns a Query.Result struct.
-
-  This is a shortend version of `App.Post |> Query.builder() |> Query.result()`
-
-  ## Parameters
-
-    - queryable: Any Ecto queryable.
-    - params: A param map - most likely from a controller.
-    - options: A keyword list of options.
-
-  ## Options
-    * `:repo` - the Ecto repo from which to work with.
-    * `:paging` - a list of paging options. For more info, see __.
-    * `:sorting` - a list of sorting options. For more info, see __.
-    * `:scopes` - a list of scope options. For more info, see __.
-
-  ## Examples
-
-      iex> Query.run(App.Post)
-      %Query.Result{data: [
-      %App.Post{body: "Body 1", title: "Title 1"},
-      %App.Post{body: "Body 2", id: 840, title: "Title 2"}],
-      meta: %{page: 1, page_total: 2, total: 2, total_pages: 1}}
-  """
-  @spec run(queryable :: Ecto.Queryable.t(), params :: Query.Builder.param(), list) ::
-          result :: Query.Result.t() | no_return()
-  def run(queryable, params \\ %{}, options \\ []) do
+  def run(queryable, repo, params, opts)
+      when is_atom(queryable) and is_atom(repo) and is_map(params) and is_list(opts) do
     queryable
-    |> builder(params, options)
-    |> result()
+    |> Ecto.Queryable.to_query()
+    |> run(repo, params, opts)
+  end
+
+  def run(queryable, repo, params, opts)
+      when is_atom(repo) and is_map(params) and is_list(opts) do
+    config = build_config(opts)
+
+    %Query{}
+    |> put_queryable(queryable)
+    |> put_repo(repo)
+    |> put_counting(config)
+    |> put_paging(params, config)
+    |> put_sorting(params, config)
+    |> put_scoping(params, config)
+    |> Result.new()
+  end
+
+  defp build_config(opts) do
+    @app_config
+    |> Keyword.merge(opts)
+    |> KeywordValidator.validate!(@opts_schema)
+    |> Enum.into(%{})
+  end
+
+  defp put_queryable(query, queryable) do
+    %{query | queryable: queryable}
+  end
+
+  defp put_repo(query, repo) do
+    %{query | repo: repo}
+  end
+
+  defp put_counting(query, config) do
+    %{
+      query
+      | count: config.count,
+        count_limit: config.count_limit,
+        count_column: config.count_column
+    }
+  end
+
+  defp put_paging(query, params, config) do
+    {limit, offset, page} = Paging.new(params, config)
+    %{query | limit: limit, offset: offset, page: page}
+  end
+
+  defp put_sorting(query, params, config) do
+    sorting = Sorting.new(params, config)
+    %{query | sorting: sorting}
+  end
+
+  defp put_scoping(query, params, config) do
+    scoping = Scoping.new(params, config)
+    %{query | scoping: scoping}
   end
 end

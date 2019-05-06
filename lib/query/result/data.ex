@@ -3,27 +3,22 @@ defmodule Query.Result.Data do
 
   import Ecto.Query, warn: false
 
-  alias Query.Builder
-
-  @spec new(Query.Builder.t()) :: list
-  def new(%Builder{} = builder) do
-    builder
+  @spec new(Query.t()) :: list()
+  def new(query) do
+    query
     |> with_scopes()
-    |> order_by(^builder.sorting)
-    |> limit(^builder.limit)
-    |> offset(^builder.offset)
-    |> builder.repo.all()
+    |> order_by(^query.sorting)
+    |> limit(^query.limit)
+    |> offset(^query.offset)
+    |> query.repo.all()
   end
 
-  @spec with_scopes(Query.Builder.t()) :: Ecto.Query.t()
-  def with_scopes(%Builder{} = builder) do
-    Enum.reduce(builder.scopes, builder.queryable, fn {context, scope, [value]}, queryable ->
-      funcs = context.module_info(:exports)
+  @spec with_scopes(Query.t()) :: Ecto.Queryable.t()
+  def with_scopes(%{scoping: {module, fun, [params]}} = query) do
+    apply(module, fun, [query.queryable, params])
+  end
 
-      case Keyword.get(funcs, scope) do
-        2 -> apply(context, scope, [queryable, value])
-        _ -> queryable
-      end
-    end)
+  def with_scopes(query) do
+    query.queryable
   end
 end
