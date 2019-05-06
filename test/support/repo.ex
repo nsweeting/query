@@ -8,8 +8,9 @@ defmodule Query.Ecto.Repo do
         pool: Ecto.Adapters.SQL.Sandbox,
         database: "query_test",
         hostname: "localhost",
-        port: 5434,
-        username: "postgres"
+        port: 5432,
+        username: "postgres",
+        password: ""
       )
 
     {:ok, config}
