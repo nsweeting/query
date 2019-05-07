@@ -11,6 +11,7 @@ defmodule Query.Result.Data do
     |> limit(^query.limit)
     |> offset(^query.offset)
     |> query.repo.all()
+    |> with_preloads(query)
   end
 
   @spec with_scopes(Query.t()) :: Ecto.Queryable.t()
@@ -20,5 +21,9 @@ defmodule Query.Result.Data do
 
   def with_scopes(query) do
     query.queryable
+  end
+
+  defp with_preloads(result, query) do
+    query.repo.preload(result, query.preloads)
   end
 end

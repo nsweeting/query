@@ -41,7 +41,8 @@ defmodule Query do
     :count_limit,
     :count_column,
     :repo,
-    :queryable
+    :queryable,
+    :preloads
   ]
 
   alias Query.{Paging, Result, Scoping, Sorting}
@@ -63,6 +64,7 @@ defmodule Query do
           | {:count_limit, :infinite | non_neg_integer()}
           | {:scoping, {module(), atom()}}
           | {:scopes, [{module(), binary()}]}
+          | {:preloads, [atom()]}
   @type options :: [option()]
 
   @app_config Application.get_all_env(:query)
@@ -81,7 +83,8 @@ defmodule Query do
     count_limit: [default: :infinite, type: [:atom, :integer]],
     count_column: [default: :id, type: :atom],
     scope: [required: false, type: [{:tuple, {:atom, :atom}}]],
-    scope_permitted: [default: [], type: {:list, :binary}]
+    scope_permitted: [default: [], type: {:list, :binary}],
+    preloads: [default: [], typee: {:list, :atom}]
   }
 
   @doc """
@@ -108,6 +111,7 @@ defmodule Query do
     * `:scope` - a `{module, function}` with an arity of 2, that will be passed an
       `Ecto.Query` as well as a map of the permitted scopes. You can then perform
       custom queries with these params
+    * `:preloads` - a list of preloads that will be applied to the result data
 
   ## Examples
 
@@ -137,6 +141,7 @@ defmodule Query do
     %Query{}
     |> put_queryable(queryable)
     |> put_repo(repo)
+    |> put_preloads(config)
     |> put_counting(config)
     |> put_paging(params, config)
     |> put_sorting(params, config)
@@ -157,6 +162,10 @@ defmodule Query do
 
   defp put_repo(query, repo) do
     %{query | repo: repo}
+  end
+
+  defp put_preloads(query, config) do
+    %{query | preloads: config.preloads}
   end
 
   defp put_counting(query, config) do

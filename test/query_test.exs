@@ -325,6 +325,22 @@ defmodule QueryTest do
       assert 5 == result.meta.total
       assert 1 == result.meta.page
     end
+
+    test "will query and return preloads" do
+      create_posts()
+
+      result = Query.run(Post, Repo, %{}, preloads: [])
+
+      for post <- result.data do
+        assert %Ecto.Association.NotLoaded{} = post.comments
+      end
+
+      result = Query.run(Post, Repo, %{}, preloads: [:comments])
+
+      for post <- result.data do
+        assert is_list(post.comments)
+      end
+    end
   end
 
   defp create_posts do

@@ -14,7 +14,7 @@ This package can be installed by adding `query` to your list of dependencies in 
 ```elixir
 def deps do
   [
-    {:query, "~> 0.4.0"}
+    {:query, "~> 0.5.0"}
   ]
 end
 ```
