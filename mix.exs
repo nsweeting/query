@@ -1,7 +1,7 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
-  @version "0.5.0"
+  @version "0.5.1"
 
   def project do
     [
@@ -9,7 +9,6 @@ defmodule Query.Mixfile do
       version: @version,
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
-      aliases: aliases(),
       description: description(),
       package: package(),
       start_permanent: Mix.env() == :prod,
@@ -36,16 +35,6 @@ defmodule Query.Mixfile do
       maintainers: ["Nicholas Sweeting"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/nsweeting/query"}
-    ]
-  end
-
-  defp aliases do
-    [
-      "db.reset": [
-        "ecto.drop",
-        "ecto.create",
-        "ecto.migrate"
-      ]
     ]
   end
 
