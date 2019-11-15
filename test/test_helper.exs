@@ -13,6 +13,8 @@ defmodule Query.Ecto.TestCase do
   end
 end
 
+Logger.configure(level: :error)
+
 Query.Ecto.Repo.start_link()
 Ecto.Adapters.SQL.Sandbox.mode(Query.Ecto.Repo, :manual)
 

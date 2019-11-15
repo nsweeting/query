@@ -6,11 +6,16 @@ elixir:
 addons:
   postgresql: '9.4'
 
+env:
+  - MIX_ENV=test
+
 services:
   - postgresql
 
 before_script:
-  - MIX_ENV=test mix db.reset
+  - mix ecto.drop -r Query.Ecto.Repo
+  - mix ecto.create -r Query.Ecto.Repo
+  - mix ecto.migrate -r Query.Ecto.Repo
 
 script:
   - mix test

@@ -1,7 +1,7 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
-  @version "0.3.0"
+  @version "0.5.1"
 
   def project do
     [
@@ -9,7 +9,6 @@ defmodule Query.Mixfile do
       version: @version,
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
-      aliases: aliases(),
       description: description(),
       package: package(),
       start_permanent: Mix.env() == :prod,
@@ -39,16 +38,6 @@ defmodule Query.Mixfile do
     ]
   end
 
-  defp aliases do
-    [
-      "db.reset": [
-        "ecto.drop",
-        "ecto.create",
-        "ecto.migrate"
-      ]
-    ]
-  end
-
   defp applications(:test), do: [:postgrex, :ecto, :logger]
   defp applications(_), do: [:logger]
 
@@ -59,9 +48,10 @@ defmodule Query.Mixfile do
   defp deps do
     [
       {:ecto, "~> 3.0"},
+      {:keyword_validator, "~> 1.0"},
       {:ecto_sql, "~> 3.0", only: :test},
       {:postgrex, "~> 0.14.1", only: :test},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.20", only: :dev, runtime: false}
     ]
   end
 end
