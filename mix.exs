@@ -59,7 +59,7 @@ defmodule Query.Mixfile do
   defp deps do
     [
       {:ecto, "~> 3.0"},
-      {:keyword_validator, "~> 0.1"},
+      {:keyword_validator, "~> 1.0"},
       {:ecto_sql, "~> 3.0", only: :test},
       {:postgrex, "~> 0.14.1", only: :test},
       {:ex_doc, "~> 0.20", only: :dev, runtime: false}
