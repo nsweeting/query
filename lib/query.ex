@@ -67,7 +67,6 @@ defmodule Query do
           | {:preloads, [atom()]}
   @type options :: [option()]
 
-  @app_config Application.get_all_env(:query)
   @opts_schema %{
     page_default: [default: 1, type: :integer],
     page_param: [default: "page", type: :binary],
@@ -84,7 +83,7 @@ defmodule Query do
     count_column: [default: :id, type: :atom],
     scope: [required: false, type: [{:tuple, {:atom, :atom}}]],
     scope_permitted: [default: [], type: {:list, :binary}],
-    preloads: [default: [], typee: {:list, :atom}]
+    preloads: [default: [], type: {:list, :atom}]
   }
 
   @doc """
@@ -150,7 +149,8 @@ defmodule Query do
   end
 
   defp build_config(opts) do
-    @app_config
+    :query
+    |> Application.get_all_env()
     |> Keyword.merge(opts)
     |> KeywordValidator.validate!(@opts_schema)
     |> Enum.into(%{})
