@@ -68,24 +68,24 @@ defmodule Query do
   @type options :: [option()]
 
   @app_config Application.get_all_env(:query)
-  @opts_schema %{
-    page_default: [default: 1, type: :integer],
-    page_param: [default: "page", type: :binary],
-    limit_default: [default: 20, type: :integer],
-    limit_max: [default: 50, type: :integer],
-    limit_param: [default: "limit", type: :binary],
-    sort_default: [default: "id", type: :binary],
-    sort_param: [default: "sort_by", type: :binary],
-    sort_permitted: [default: [], type: {:list, :binary}],
-    dir_default: [default: "asc", type: :binary],
-    dir_param: [default: "dir", type: :binary],
-    count: [default: true, type: :boolean],
-    count_limit: [default: :infinite, type: [:atom, :integer]],
-    count_column: [default: :id, type: :atom],
-    scope: [required: false, type: [{:tuple, {:atom, :atom}}]],
-    scope_permitted: [default: [], type: {:list, :binary}],
-    preloads: [default: [], typee: {:list, :atom}]
-  }
+  @opts_schema KeywordValidator.schema!(
+                 page_default: [default: 1, is: :integer],
+                 page_param: [default: "page", is: :binary],
+                 limit_default: [default: 20, is: :integer],
+                 limit_max: [default: 50, is: :integer],
+                 limit_param: [default: "limit", is: :binary],
+                 sort_default: [default: "id", is: :binary],
+                 sort_param: [default: "sort_by", is: :binary],
+                 sort_permitted: [default: [], is: {:list, :binary}],
+                 dir_default: [default: "asc", is: :binary],
+                 dir_param: [default: "dir", is: :binary],
+                 count: [default: true, is: :boolean],
+                 count_limit: [default: :infinite, is: {:one_of, [:atom, :integer]}],
+                 count_column: [default: :id, is: :atom],
+                 scope: [required: false, is: {:tuple, {:atom, :atom}}],
+                 scope_permitted: [default: [], is: {:list, :binary}],
+                 preloads: [default: [], is: {:list, :atom}]
+               )
 
   @doc """
   Fetches data from the given repository based on the params and options given.
