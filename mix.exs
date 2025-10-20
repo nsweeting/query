@@ -80,7 +80,7 @@ defmodule Query.Mixfile do
       {:ecto_sql, "~> 3.13", only: :test},
       {:keyword_validator, "~> 2.0"},
       {:postgrex, "~> 0.19", only: :test},
-      {:ex_doc, "~> 0.20", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.38", only: :dev, runtime: false}
     ]
   end
 end
