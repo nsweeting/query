@@ -9,8 +9,8 @@ defmodule Query.Ecto.Repo do
         database: "query_test",
         hostname: "localhost",
         port: 5432,
-        username: "postgres",
-        password: ""
+        username: "guest",
+        password: "guest"
       )
 
     {:ok, config}

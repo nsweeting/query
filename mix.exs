@@ -1,7 +1,7 @@
 defmodule Query.Mixfile do
   use Mix.Project
 
-  @version "0.5.1"
+  @version "0.6.0"
 
   def project do
     [
@@ -9,6 +9,8 @@ defmodule Query.Mixfile do
       version: @version,
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
+      aliases: aliases(),
+      preferred_cli_env: preferred_cli_env(),
       description: description(),
       package: package(),
       start_permanent: Mix.env() == :prod,
@@ -20,6 +22,33 @@ defmodule Query.Mixfile do
   def application do
     [
       extra_applications: applications(Mix.env())
+    ]
+  end
+
+  # Aliases are shortcuts or tasks specific to the current project.
+  defp aliases do
+    [
+      setup: [
+        "local.hex --if-missing --force",
+        "local.rebar --if-missing --force",
+        "deps.get"
+      ],
+      ci: [
+        "setup",
+        "compile --warnings-as-errors",
+        "format --check-formatted",
+        "ecto.drop -r Query.Ecto.Repo",
+        "ecto.create -r Query.Ecto.Repo",
+        "ecto.migrate -r Query.Ecto.Repo",
+        "test"
+      ]
+    ]
+  end
+
+  # Specifies the preferred env for mix commands.
+  defp preferred_cli_env do
+    [
+      ci: :test
     ]
   end
 
@@ -47,10 +76,10 @@ defmodule Query.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto, "~> 3.0"},
-      {:keyword_validator, "~> 1.0"},
-      {:ecto_sql, "~> 3.0", only: :test},
-      {:postgrex, "~> 0.14.1", only: :test},
+      {:ecto, "~> 3.13"},
+      {:ecto_sql, "~> 3.13", only: :test},
+      {:keyword_validator, "~> 2.0"},
+      {:postgrex, "~> 0.19", only: :test},
       {:ex_doc, "~> 0.20", only: :dev, runtime: false}
     ]
   end
